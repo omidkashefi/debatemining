@@ -1,13 +1,17 @@
 <?php
 	require_once('TwitterAPIExchange.php');
 	
-	/** Set access tokens here **/
+	/** read access tokens from file **/
+	$myfile = fopen("access.key", "r") or die("Unable to open file!");
+
 	$settings = array(
-	'oauth_access_token' => "258873860-oKReHIJsIBCease6hN2nXt6lE3vf6EHCfDnHMUvZ",
-	'oauth_access_token_secret' => "1SzTa8PxNb5otYvmzexfoAJo6y73kYxL80jH4j7RszNBK",
-	'consumer_key' => "EcTYhzTSYJgyM6rMuVt19R7ki",
-	'consumer_secret' => "FoOrhjlu5gTiIKnGWbsVd40Li8y30iTtbEXsIw5llhs8UKYxoj"
+	'oauth_access_token' => trim(fgets($myfile), "\n"),
+	'oauth_access_token_secret' => trim(fgets($myfile), "\n"),
+	'consumer_key' => trim(fgets($myfile), "\n"),
+	'consumer_secret' => trim(fgets($myfile), "\n")
 	);
+
+	fclose($myfile);
 
 	/** twitter search url **/
 	$url = "https://api.twitter.com/1.1/search/tweets.json";
