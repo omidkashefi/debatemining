@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import sys,getopt,got,datetime,codecs
+import sys,getopt,got,datetime,codecs,re
+
+def removeURL(s):
+	i = s.find("http://")
+	if i == -1:
+		i = s.find("https://")
+	if i != -1:
+		s = s[0:i]
+
+	i = s.find("pic.twitter.com")
+	if i != -1:
+		s = s[0:i]
+
+	return s
+
+def removeMentions(s):
+	return ' '.join(re.sub("(@[A-Za-z0-9]+)|(\w+:\/\/\S+)"," ",s).split())
 
 def main(argv):
 
@@ -55,8 +71,9 @@ def main(argv):
 				tweetCriteria.maxTweets = int(arg)
 
 
-		outputFile = codecs.open("output_got.csv", "w+", "utf-8")
-		outputFile2 = codecs.open("output_got.txt", "w+", "utf-8")
+		outputFile = codecs.open(tweetCriteria.since + ".all", "w+", "utf-8")
+		outputFile2 = codecs.open(tweetCriteria.since + ".txt.nourl" , "w+", "utf-8")
+		outputFile3 = codecs.open(tweetCriteria.since + ".txt.nourl.nomention" , "w+", "utf-8")
 
 		#outputFile.write('username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink')
 
@@ -65,9 +82,11 @@ def main(argv):
 		def receiveBuffer(tweets):
 			for t in tweets:
 				outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink)))
-				outputFile2.write(('%s\n' % (t.text)))
+				outputFile2.write(('%s\n' % (removeURL(t.text))))
+				outputFile3.write(('%s\n' % (removeMentions(removeURL(t.text)))))
 			outputFile.flush();
 			outputFile2.flush();
+			outputFile3.flush();
 			print 'More %d saved on file...\n' % len(tweets)
 
 		got.manager.TweetManager.getTweets(tweetCriteria, receiveBuffer)
@@ -77,6 +96,7 @@ def main(argv):
 	finally:
 		outputFile.close()
 		outputFile2.close()
+		outputFile3.close()
 		print 'Done. Output file generated "output_got.csv".'
 
 if __name__ == '__main__':
