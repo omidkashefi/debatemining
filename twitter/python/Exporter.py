@@ -81,7 +81,8 @@ def main(argv):
 
 		def receiveBuffer(tweets):
 			for t in tweets:
-				outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink)))
+				#outputFile.write(('\n%s;%s;%d;%d;"%s";%s;%s;%s;"%s";%s' % (t.username, t.date.strftime("%Y-%m-%d %H:%M"), t.retweets, t.favorites, t.text, t.geo, t.mentions, t.hashtags, t.id, t.permalink)))
+				outputFile.write(('\n%s;"%s";%s' % (t.date.strftime("%Y-%m-%d %H:%M"), t.text, t.id)))
 				outputFile2.write(('%s\n' % (removeURL(t.text))))
 				outputFile3.write(('%s\n' % (removeMentions(removeURL(t.text)))))
 			outputFile.flush();
